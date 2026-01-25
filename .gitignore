@@ -1,0 +1,9 @@
+For Later.txt
+TODO.txt
+.ipynb_checkpoints/
+__pycache__/
+*.parquet
+*.pt
+*.pth
+*.h5
+results/
