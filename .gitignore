@@ -1,9 +1,30 @@
-For Later.txt
-TODO.txt
-.ipynb_checkpoints/
+# Data directories
+phase_1/data/
+phase_1/outputs/
+phase_2/data/
+
+# Python
 __pycache__/
-*.parquet
-*.pt
-*.pth
-*.h5
-results/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

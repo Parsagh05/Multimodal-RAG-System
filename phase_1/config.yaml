@@ -1,0 +1,35 @@
+# Multimodal RAG System Configuration
+
+models:
+  text_model_id: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+  image_model_id: "openai/clip-vit-base-patch32"
+  text_dim: 768
+  image_dim: 512
+
+fusion:
+  strategy: "concatenation" # Options: concatenation, projection_head, attention
+  super_vector_dim: 1280    # 768 + 512 for concatenation
+  text_weight: 0.5
+  normalize: true
+
+paths:
+  dataset_dir: "data/mytorobdataset"
+  metadata_path: "processed_metadata.parquet"
+  images_root: "images"
+  output_dir: "outputs/multimodal_system"
+  image_output_dir: "outputs/image_search_system"
+  text_output_dir: "outputs/text_search_system"
+  embeddings_dir: "outputs/embeddings"
+  model_version: "v1.0.0"
+
+dataset:
+  kaggle_dataset_slug: "parham-dot/mlops-torob-dataset"
+  kaggle_images_slug: "parham-dot/torob-images"
+
+pipeline:
+  batch_size: 64
+  image_batch_size: 128
+  text_batch_size: 64
+  dry_run: false # !! TODO doesnt support yet should get fixed 
+  dry_run_samples: 100
+  device: "cuda" # Will be overridden by torch.cuda.is_available() if needed

@@ -1,31 +1,140 @@
-# Multimodal RAG System - Phase 1
+# MLOps - Machine Learning Systems Design
 
-This repository contains the first phase of a Multimodal Retrieval-Augmented Generation (RAG) system developed for the Torob dataset. The system compares text-only, image-only, and hybrid (multimodal) retrieval strategies.
+**Sharif University of Technology**  
+**Dr. Fatemeh Seyed-Salehi**
 
-## Project Structure
+A comprehensive Multimodal RAG (Retrieval-Augmented Generation) system with an intelligent Agent layer, built for the Torob e-commerce dataset.
 
-- **eda.ipynb**: Exploratory data analysis of the Torob dataset.
-- **preprocessing.ipynb**: Data cleaning and preprocessing pipeline.
-- **model-text.ipynb**: Implementation and evaluation of text-based retrieval.
-- **model-image.ipynb**: Implementation and evaluation of image-based retrieval (CLIP).
-- **model-multimodal.ipynb**: Hybrid retrieval system combining text and image embeddings.
-- **config.yaml**: Main configuration file for models, paths, and pipeline parameters.
+---
 
-## Performance Overview
+## Project Overview
 
-| Metric | Text-Only | Image-Only | Hybrid (Multimodal) |
-| --- | --- | --- | --- |
-| **Precision@10** | 0.6452 | 0.2729 | **0.6688** |
-| **Recall@10** | **0.2304** | 0.0623 | 0.2020 |
-| **MRR** | **1.0000** | 0.4855 | 0.8626 |
-| **NDCG** | **0.9307** | 0.5014 | 0.8466 |
+This project implements a production-ready ML system in two phases:
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **Phase 1** | Multimodal RAG System (Text + Image + Hybrid retrieval) | ✅ Complete |
+| **Phase 2** | Agentic AI with Tool-use, Memory, and Conversational Interface | ✅ Complete |
+
+## Architecture
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                        Phase 2: Agentic AI                         │
+│                                                                    │
+│  ┌─────────────┐    ┌──────────────┐    ┌──────────────────────┐  │
+│  │  /chat API  │───▶│  LangGraph   │───▶│  Short-Term Memory   │  │
+│  │  (FastAPI)  │    │  Agent Core  │    │  (Sliding Window)    │  │
+│  └─────────────┘    └──────┬───────┘    └──────────────────────┘  │
+│                            │                                       │
+│                            ▼ Tool Calls                            │
+├────────────────────────────────────────────────────────────────────┤
+│                        Phase 1: RAG System                         │
+│                                                                    │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────────────┐  │
+│  │  Text Search │   │ Image Search │   │  Hybrid/Multimodal   │  │
+│  │  (SBERT)     │   │  (CLIP)      │   │  (Concatenation)     │  │
+│  └──────┬───────┘   └──────┬───────┘   └──────────┬───────────┘  │
+│         │                   │                      │               │
+│         └───────────────────┼──────────────────────┘               │
+│                             ▼                                      │
+│              ┌──────────────────────────────┐                      │
+│              │    ChromaDB Vector Store      │                      │
+│              │    + Product Metadata         │                      │
+│              └──────────────────────────────┘                      │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+## Repository Structure
+
+```
+mlops/
+├── README.md                 # This file
+├── phase_1/                  # Phase 1: Multimodal RAG System
+│   ├── README.md
+│   ├── config.yaml
+│   ├── preprocessing.ipynb
+│   ├── generate-embeddings.ipynb
+│   ├── model-text.ipynb
+│   ├── model-image.ipynb
+│   ├── model-multimodal.ipynb
+│   └── eda.ipynb
+├── phase_2/                  # Phase 2: Agentic AI
+│   ├── README.md
+│   ├── config.yaml
+│   ├── requirements.txt
+│   ├── cli.py
+│   ├── app/
+│   │   ├── main.py           # FastAPI /chat endpoint
+│   │   ├── agent/
+│   │   │   ├── core.py       # LangGraph agent
+│   │   │   ├── memory.py     # Short-term memory
+│   │   │   └── tools.py      # RAG tool wrappers
+│   │   ├── rag/
+│   │   │   └── retriever.py  # Phase 1 RAG integration
+│   │   └── models/
+│   │       └── schemas.py    # API schemas
+│   └── tests/
+│       └── test_api.py
+└── .gitignore
+```
+
+## Quick Start
+
+### Phase 1 (RAG Foundation)
+
+```bash
+cd phase_1
+# Follow the Phase 1 README for data preparation and embedding generation
+```
+
+### Phase 2 (Agent System)
+
+```bash
+cd phase_2
+pip install -r requirements.txt
+export OPENAI_API_KEY="your-key"
+
+# Start the API server
+python cli.py serve
+
+# Or use the interactive CLI
+python cli.py chat
+```
+
+### Test the API
+
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chat_id": "demo-1",
+    "messages": [{"type": "text", "content": "I want an iPhone"}]
+  }'
+```
 
 ## Key Features
 
-- **Multilingual Support**: Uses `paraphrase-multilingual-mpnet-base-v2` for text embeddings.
-- **Visual Search**: Leverages `openai/clip-vit-base-patch32` for image processing.
-- **Hybrid Fusion**: Employs concatenation strategy for multi-modal embedding generation.
-- **Efficient Retrieval**: Implementation supports HNSW indexing for performance.
+- **Multimodal RAG**: Text, image, and hybrid retrieval with ChromaDB
+- **Intelligent Agent**: LangGraph-based decision-making with tool-use
+- **Conversation Memory**: Sliding window short-term memory per session
+- **Evidence-based Responses**: Grounded in retrieved product data
+- **Multi-scenario Support**: Product search, comparison, seller hunt, image search
+- **Production API**: FastAPI with proper validation and error handling
 
-## Status: Phase 1
-Phase 1 focuses on establishing a robust retrieval baseline and comparing unimodal vs. multimodal architectures.
+## Technologies
+
+| Component | Technology |
+|-----------|-----------|
+| Orchestration | LangGraph |
+| LLM Framework | LangChain |
+| Vector DB | ChromaDB |
+| Text Embeddings | Sentence-Transformers (paraphrase-multilingual-mpnet) |
+| Image Embeddings | CLIP (ViT-B/32) |
+| API Server | FastAPI + Uvicorn |
+| CLI | Typer + Rich |
+| Data Validation | Pydantic v2 |
+
+## License
+
+This project is developed as part of the Machine Learning Systems Design course at Sharif University of Technology.

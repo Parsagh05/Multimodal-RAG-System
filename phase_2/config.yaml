@@ -1,0 +1,47 @@
+# Phase 2 Configuration
+
+llm:
+  provider: "openai"  # Options: openai, ollama
+  model: "gpt-4o-mini"
+  temperature: 0.3
+  max_tokens: 1024
+  # For OpenAI: set OPENAI_API_KEY env variable
+  # For Ollama: set base_url below
+  base_url: null  # e.g., "http://localhost:11434/v1" for Ollama
+
+rag:
+  # ChromaDB settings
+  chroma_persist_dir: "../phase_1/outputs/multimodal_system/chroma_db"
+  collection_name: "products"
+  top_k: 10
+
+  # Embedding models (must match Phase 1)
+  text_model_id: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+  image_model_id: "openai/clip-vit-base-patch32"
+  text_dim: 768
+  image_dim: 512
+
+  # Data paths
+  metadata_path: "../phase_1/outputs/embeddings/processed_metadata.parquet"
+
+memory:
+  # Short-term memory settings
+  max_messages: 20  # Sliding window size
+  summary_threshold: 15  # Summarize after this many messages
+
+  # Semantic memory (optional/bonus)
+  enable_semantic_memory: false
+  semantic_collection_name: "semantic_memory"
+
+agent:
+  # Decision thresholds
+  rag_confidence_threshold: 0.5
+  max_clarification_rounds: 3
+
+  # System prompt behavior
+  require_evidence: true
+  allow_speculation: false
+
+server:
+  host: "0.0.0.0"
+  port: 8000
